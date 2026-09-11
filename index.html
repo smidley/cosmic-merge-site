@@ -1,254 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmic Merge - Drop, Merge & Build the Stars</title>
-    <meta name="description" content="A physics-based puzzle game where you drop celestial objects, chain combos, and evolve cosmic dust into black holes.">
-    <meta property="og:title" content="Cosmic Merge">
-    <meta property="og:description" content="Drop, merge, and chain combos to evolve cosmic dust into black holes.">
-    <meta property="og:type" content="website">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
-            background: #020108;
-            color: #e0e0f0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* Starfield background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background:
-                radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.8), transparent),
-                radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.6), transparent),
-                radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.7), transparent),
-                radial-gradient(1px 1px at 70% 40%, rgba(200,210,255,0.8), transparent),
-                radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.5), transparent),
-                radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.6), transparent),
-                radial-gradient(1px 1px at 45% 45%, rgba(180,200,255,0.7), transparent),
-                radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.5), transparent),
-                radial-gradient(1px 1px at 65% 70%, rgba(255,255,255,0.6), transparent),
-                radial-gradient(1px 1px at 25% 35%, rgba(220,220,255,0.4), transparent);
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 680px;
-            margin: 0 auto;
-            padding: 60px 24px 80px;
-            text-align: center;
-        }
-
-        /* Cosmic glow orb */
-        .hero-orb {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 40px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 40% 35%,
-                #c8b0ff 0%,
-                #7040d0 30%,
-                #3018a0 60%,
-                #0a0630 100%);
-            box-shadow:
-                0 0 40px rgba(120, 80, 220, 0.5),
-                0 0 80px rgba(80, 40, 180, 0.3),
-                inset 0 -8px 20px rgba(0, 0, 0, 0.4);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 40px rgba(120,80,220,0.5), 0 0 80px rgba(80,40,180,0.3); }
-            50% { box-shadow: 0 0 60px rgba(120,80,220,0.7), 0 0 120px rgba(80,40,180,0.4); }
-        }
-
-        h1 {
-            font-size: 48px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #ffffff, #a0b0ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle {
-            font-size: 18px;
-            color: rgba(180, 190, 230, 0.7);
-            margin-bottom: 40px;
-            font-weight: 400;
-        }
-
-        .tagline {
-            font-size: 22px;
-            line-height: 1.6;
-            color: rgba(220, 225, 245, 0.85);
-            margin-bottom: 48px;
-            max-width: 520px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .app-store-badge {
-            display: inline-block;
-            margin-bottom: 56px;
-        }
-
-        .app-store-badge img {
-            height: 54px;
-        }
-
-        .features {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            text-align: left;
-            margin-bottom: 56px;
-        }
-
-        @media (max-width: 500px) {
-            .features { grid-template-columns: 1fr; }
-            h1 { font-size: 36px; }
-        }
-
-        .feature {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
-            padding: 24px;
-        }
-
-        .feature-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: rgba(160, 180, 255, 0.9);
-            margin-bottom: 6px;
-        }
-
-        .feature-desc {
-            font-size: 14px;
-            line-height: 1.5;
-            color: rgba(200, 205, 225, 0.6);
-        }
-
-        .tiers {
-            margin-bottom: 56px;
-        }
-
-        .tiers h2 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: rgba(220, 225, 245, 0.9);
-        }
-
-        .tier-chain {
-            font-size: 15px;
-            color: rgba(180, 190, 230, 0.6);
-            line-height: 2;
-            max-width: 480px;
-            margin: 0 auto;
-        }
-
-        .tier-chain span {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 20px;
-            background: rgba(255, 255, 255, 0.06);
-            margin: 2px;
-            white-space: nowrap;
-        }
-
-        .tier-chain .arrow {
-            color: rgba(120, 140, 200, 0.4);
-            background: none;
-            padding: 0 2px;
-        }
-
-        footer {
-            margin-top: 40px;
-            padding-top: 32px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            font-size: 13px;
-            color: rgba(150, 160, 200, 0.4);
-        }
-
-        footer a {
-            color: rgba(160, 180, 255, 0.6);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            color: rgba(180, 200, 255, 0.9);
-        }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cosmic Merge — A universe in every drop</title>
+<meta name="description" content="Aim, drop, and merge celestial bodies into a growing universe. Cosmic Merge is a cosmic puzzle game for iPhone, iPad, and Apple TV.">
+<link rel="canonical" href="https://smidley.github.io/cosmic-merge-site/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/site.css?v=1.2.0">
+<meta property="og:type" content="website"><meta property="og:title" content="Cosmic Merge — A universe in every drop">
+<meta property="og:description" content="Small Moonlets. Massive chain reactions. A cosmic merge puzzle for iPhone, iPad, and Apple TV.">
+<meta property="og:url" content="https://smidley.github.io/cosmic-merge-site/">
+<meta property="og:image" content="https://smidley.github.io/cosmic-merge-site/assets/gameplay-tv.jpeg">
+<meta property="og:image:alt" content="An example Cosmic Merge board filled with colorful celestial bodies.">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Cosmic Merge">
+<meta name="twitter:description" content="A universe in every drop."><meta name="twitter:image" content="https://smidley.github.io/cosmic-merge-site/assets/gameplay-tv.jpeg">
+<meta name="apple-itunes-app" content="app-id=6761395215">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"Cosmic Merge","description":"A single-player cosmic merge puzzle game.","url":"https://smidley.github.io/cosmic-merge-site/","operatingSystem":["iOS","iPadOS","tvOS"],"applicationCategory":"GameApplication","genre":"Puzzle","playMode":"SinglePlayer","installUrl":"https://apps.apple.com/app/id6761395215","image":"https://smidley.github.io/cosmic-merge-site/assets/gameplay-tv.jpeg"}</script>
 </head>
 <body>
-    <div class="container">
-        <div class="hero-orb"></div>
-
-        <h1>Cosmic Merge</h1>
-        <p class="subtitle">Drop, Merge & Build the Stars</p>
-
-        <p class="tagline">
-            A physics-based puzzle game where you drop celestial objects, chain combos,
-            and evolve cosmic dust into black holes.
-        </p>
-
-        <!-- Replace # with your actual App Store link once live -->
-        <div class="app-store-badge">
-            <a href="https://apps.apple.com/us/app/cosmic-merge-game/id6761395215">
-                <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store">
-            </a>
-        </div>
-
-        <div class="features">
-            <div class="feature">
-                <div class="feature-title">11 Celestial Tiers</div>
-                <div class="feature-desc">Evolve from dust particles to black holes. Each tier features a unique procedural surface that reacts to your device's tilt.</div>
-            </div>
-            <div class="feature">
-                <div class="feature-title">Combo Chains</div>
-                <div class="feature-desc">Merge quickly to trigger multipliers that skyrocket your score. The deeper the combo, the bigger the reward.</div>
-            </div>
-            <div class="feature">
-                <div class="feature-title">Real-Time Shaders</div>
-                <div class="feature-desc">Flowing lava, crackling lightning, bioluminescent oceans, and swirling accretion disks — all rendered in real time.</div>
-            </div>
-            <div class="feature">
-                <div class="feature-title">Game Center</div>
-                <div class="feature-desc">Compete on global leaderboards and unlock 13 achievements across tier milestones, score goals, and combo challenges.</div>
-            </div>
-            <div class="feature">
-                <div class="feature-title">Physics-Driven</div>
-                <div class="feature-desc">Realistic gravity, momentum, and collisions mean every game plays out differently. One drop can trigger a cascade.</div>
-            </div>
-            <div class="feature">
-                <div class="feature-title">No Ads. No IAP.</div>
-                <div class="feature-desc">Just the game. Plays on iPhone, iPad, and Apple TV.</div>
-            </div>
-        </div>
-
-        <div class="tiers">
-            <h2>The Evolution Chain</h2>
-            <div class="tier-chain">
-                <span>Dust</span><span class="arrow">&rarr;</span><span>Asteroid</span><span class="arrow">&rarr;</span><span>Ice Rock</span><span class="arrow">&rarr;</span><span>Molten World</span><span class="arrow">&rarr;</span><span>Moon</span><span class="arrow">&rarr;</span><span>Planet</span><span class="arrow">&rarr;</span><span>Slime World</span><span class="arrow">&rarr;</span><span>Gas Giant</span><span class="arrow">&rarr;</span><span>Star</span><span class="arrow">&rarr;</span><span>Storm World</span><span class="arrow">&rarr;</span><span>Black Hole</span>
-            </div>
-        </div>
-
-        <footer>
-            <p>&copy; 2026 Smidley. All rights reserved.</p>
-            <p style="margin-top: 8px;">
-                <a href="support.html">Support</a> &middot;
-                <a href="privacy.html">Privacy Policy</a>
-            </p>
-        </footer>
-    </div>
-</body>
-</html>
+<a class="skip" href="#main">Skip to content</a>
+<header><nav class="wrap" aria-label="Main navigation"><a class="brand" href="./"><img src="assets/favicon.svg" width="32" height="32" alt="">COSMIC MERGE</a><div class="links"><a href="#how-to-play">How to play</a><a href="support.html">Support</a><a href="privacy.html">Privacy</a></div></nav></header>
+<div class="preview"><div class="wrap">A look at version 1.2 · New modes and saved runs are in development. The App Store has the current release.</div></div>
+<main id="main">
+<div class="wrap hero">
+<div><p class="eyebrow">A cosmic puzzle, at your pace</p><h1>A universe in<br>every drop.</h1><p class="lede">Start with a tiny Moonlet. Find its match. Follow the chain reaction from glowing worlds to a powerful Black Hole.</p><div class="actions"><a class="button" href="https://apps.apple.com/app/id6761395215">Get it on the App Store</a><a href="#how-to-play">See how it works ↓</a></div><p class="quiet">Made for iPhone, iPad, and Apple TV.<br>One board. Eleven discoveries. Plenty of “one more try.”</p></div>
+<figure><div class="phone"><img src="assets/gameplay-phone.jpeg" width="1179" height="2565" fetchpriority="high" alt="A Cosmic Merge example board: a Gas Giant and Planet support a stack of Moons, a Slime Planet, Ice Rock, and smaller bodies below a red danger line."></div><figcaption>Rendered by the app. An example board from the version 1.2 preview.</figcaption></figure>
+</div>
+<section class="section" id="how-to-play"><div class="wrap"><p class="eyebrow">Easy to start. Space to master.</p><h2>Small moves.<br>Cosmic consequences.</h2><div class="steps"><div class="step"><h3>Aim and drop</h3><p>Drag to find your spot, then release. Tap Next to swap your held piece when another choice fits better.</p></div><div class="step"><h3>Find a match</h3><p>Two matching bodies become the next discovery. Merge again quickly to keep a combo going and build your score.</p></div><div class="step"><h3>Make room for wonder</h3><p>Keep body centers below the danger line. Ice shards clear small bodies; Storm Caller can remove a body when space gets tight.</p></div></div></div></section>
+<section class="section" id="new"><div class="wrap"><p class="eyebrow">Coming in version 1.2</p><h2>More ways to explore.</h2><p class="section-intro">Keep a favorite run going, meet today’s challenge, or take the pressure off and experiment.</p><div class="cards"><article class="card"><span class="tag">Pick up where you left off</span><h3>Save & Continue</h3><p>Your board, queue, score, and abilities stay with the run. Save to the menu and continue later on the same device.</p></article><article class="card"><span class="tag">A new seed every day</span><h3>Daily Cosmic Challenge</h3><p>One scored attempt per device each UTC day, plus unlimited practice. Share the dated result with friends. Daily results stay local; Classic has its own Game Center board.</p></article><article class="card"><span class="tag">Eleven bodies to discover</span><h3>Your celestial collection</h3><p>Reveal each body as you find it, keep its first-discovery date, and learn what makes it special.</p></article><article class="card"><span class="tag">Room to breathe</span><h3>Zen & a guided first flight</h3><p>Learn with three guided drops, then explore Zen without game over. Clear a crowded board whenever you want, with optional aim assistance and a separate best score.</p></article></div></div></section>
+<section class="section"><div class="wrap split"><div><p class="eyebrow">Your universe, on the big screen</p><h2>Settle in.<br>Let the planets roll.</h2><p class="section-intro">Play on Apple TV with the Siri Remote or a compatible extended gamepad. Aim with the touchpad or stick, select to drop, and pause whenever you need a moment.</p><a href="support.html#controls">See the controls →</a></div><figure><div class="tv"><img src="assets/gameplay-tv.jpeg" width="1920" height="1080" loading="lazy" alt="Cosmic Merge on Apple TV, with a centered board and larger score and next-piece panels to either side."></div><figcaption>An example Apple TV board, rendered by the version 1.2 app.</figcaption></figure></div></section>
+<section class="section"><div class="wrap"><p class="eyebrow">From the smallest spark</p><h2>Meet your growing universe.</h2><p class="section-intro">Every tier has its own shape and character. The first four can appear in your queue. The rest are yours to create.</p><ol class="tier-list" aria-label="Celestial tiers, in merge order"><li>Moonlet</li><li>Prism Rock</li><li>Ice Rock</li><li>Molten</li><li>Moon</li><li>Planet</li><li>Slime Planet</li><li>Gas Giant</li><li>Star</li><li>Storm World</li><li>Black Hole</li></ol></div></section>
+<section class="closing wrap"><p class="eyebrow">Your next discovery is a drop away</p><h2>Make a little space.</h2><div class="actions"><a class="button" href="https://apps.apple.com/app/id6761395215">Download Cosmic Merge</a></div><p class="quiet">Questions before launch? <a href="support.html">Visit support.</a></p></section>
+</main>
+<footer><div class="wrap footer-row"><span>Cosmic Merge · Made by Scott Brant</span><div><a href="support.html">Support</a><a href="privacy.html">Privacy</a><a href="https://github.com/smidley/cosmic-merge-site">Website source</a></div></div></footer>
+</body></html>
