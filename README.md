@@ -4,7 +4,7 @@ This repository is the authoritative source for the small static website. No fra
 
 Preview locally with `python3 -m http.server 8766 --bind 127.0.0.1`. Validate structure, links, metadata, image sizes, and design-token contrast with `python3 scripts/validate.py`.
 
-The page intentionally labels version 1.2 as a preview. Remove that banner and update release wording only after the app is actually available, its Rules 2 leaderboard exists, and signed iCloud behavior has been verified. There is no online daily leaderboard in this implementation.
+The page intentionally labels version 1.2 as a preview. Remove that banner and update release wording only after the app is actually available, authenticated submissions to its existing leaderboard work, and signed iCloud behavior has been verified. There is no online daily leaderboard in this implementation.
 
 Gameplay images are illustrative board fixtures rendered by the actual SpriteKit app in `SceneFlowTests.testRenderExampleBoardAndMenus`, exported from its test result bundle. They are not generated artwork or claims of recorded play sessions. Recapture after meaningful UI changes.
 
